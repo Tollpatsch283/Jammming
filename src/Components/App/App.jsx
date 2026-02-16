@@ -1,35 +1,105 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import React, { useState } from "react";
+import styles from "./App.module.css";
+import SearchResults from "../SearchResults/SearchResults";
+import Playlist from "../Playlist/Playlist";
+import SearchBar from "../SearchBar/SearchBar";
+import { Spotify } from "../../util/Spotify/Spotify";
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [searchResults, setSearchResults] = useState([
+    {
+      name: "Example Track Name 1",
+      artist: "Example Track Artist 1",
+      album: "Example Track Album 1",
+      id: 1,
+    },
+    {
+      name: "Example Track Name 2",
+      artist: "Example Track Artist 2",
+      album: "Example Track Album 2",
+      id: 2,
+    },
+  ]);
+  const [playlistName, setPlaylistName] = useState("Example Playlist Name");
+  const [playlistTracks, setPlaylistTracks] = useState([
+    {
+      name: "Example Playlist Name 1",
+      artist: "Example Playlist Artist 1",
+      album: "Example Playlist Album 1",
+      id: 11,
+    },
+    {
+      name: "Example Playlist Name 2",
+      artist: "Example Playlist Artist 2",
+      album: "Example Playlist Album 2",
+      id: 22,
+    },
+    {
+      name: "Example Playlist Name 3",
+      artist: "Example Playlist Artist 3",
+      album: "Example Playlist Album 3",
+      id: 33,
+    },
+  ]);
+
+  function addTrack(track) {
+    const existingTrack = playlistTracks.find((t) => t.id === track.id);
+    const newTrack = playlistTracks.concat(track);
+    if (existingTrack) {
+      console.log("Track already exists");
+    } else {
+      setPlaylistTracks(newTrack);
+    }
+  }
+
+  function removeTrack(track) {
+    const existingTrack = playlistTracks.filter((t) => t.id !== track.id);
+    setPlaylistTracks(existingTrack);
+  }
+
+  function updatePlaylistName(name) {
+    setPlaylistName(name);
+  }
+
+  function savePlaylist() {
+    const trackURIs = playlistTracks.map((t) => t.uri);
+    Spotify.savePlaylist(playlistName, trackURIs).then(() => {
+      updatePlaylistName("New Playlist");
+      setPlaylistTracks([]);
+    });
+  }
+
+  function search(term) {
+    Spotify.search(term).then((result) => setSearchResults(result));
+  }
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+    <div>
+      <h1>
+        Ja<span className={styles.highlight}>mmm</span>ing
+      </h1>
+      <div className={styles.App}>
+        {/* <!-- Add a SearchBar component --> */}
+        <SearchBar onSearch={search} />
+
+        <div className={styles["App-playlist"]}>
+          {/* <!-- Add a SearchResults component --> */}
+          <SearchResults userSearchResults={searchResults} onAdd={addTrack} />
+          {/* passing searchResults state to the SearchResults component as userSearchResults */}
+
+          {/* <!-- Add a Playlist component --> */}
+          <Playlist
+            playlistName={playlistName}
+            playlistTracks={playlistTracks}
+            onRemove={removeTrack}
+            onNameChange={updatePlaylistName}
+            onSave={savePlaylist}
+          />
+          {/* passing playlistName & playlistTracks states to the Playlist component as userSearchResults */}
+        </div>
       </div>
-      <h1>Vite + ffffReact</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    </div>
+  );
 }
 
-export default App
+export default App;
