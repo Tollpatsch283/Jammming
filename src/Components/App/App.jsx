@@ -62,6 +62,8 @@ function App() {
   }
 
   function savePlaylist() {
+    console.log("token:", localStorage.getItem("access_token"));
+    console.log("expiry:", localStorage.getItem("token_expiry"));
     const trackURIs = playlistTracks.map((t) => t.uri);
     Spotify.savePlaylist(playlistName, trackURIs).then(() => {
       updatePlaylistName("New Playlist");
