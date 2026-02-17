@@ -74,7 +74,7 @@ const Spotify = {
         console.log("Access token expired and removed.");
       }, expiresIn * 1000);
 
-      window.history.pushState({}, null, "/");
+      window.history.pushState({}, null, "/Jammming/");
       return accessToken;
     }
 
