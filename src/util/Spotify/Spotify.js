@@ -96,6 +96,8 @@ const Spotify = {
 
     // Redirect the user to Spotify’s authorization page.
     window.location = redirect;
+
+    return new Promise(() => {}); 
   },
 
 
