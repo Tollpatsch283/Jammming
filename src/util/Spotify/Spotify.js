@@ -61,7 +61,7 @@ const Spotify = {
         accessToken = data.access_token;
         expiresAt = Date.now() + data.expires_in * 1000;
 
-        window.history.replaceState({}, document.title, "Jammming/"); // Clean URL
+        window.history.replaceState({}, document.title, "/"); // Clean URL
         return accessToken;
       } else {
         console.error("Token exchange failed", data);
