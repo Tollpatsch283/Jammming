@@ -54,103 +54,6 @@ const Spotify = {
         })
       });
 
-<<<<<<< HEAD
-      const jsonResponse = await response.json();
-      accessToken = jsonResponse.access_token;
-      console.log("Access token in code:", accessToken);
-      localStorage.setItem("access_token", accessToken);
-
-      // Store the token expiry time in localStorage.
-      const expiresIn = jsonResponse.expires_in;
-      const now = new Date();
-      const expiry = new Date(now.getTime() + (expiresIn * 1000));
-      localStorage.setItem('token_expiry', expiry);
-      console.log("Token expiry in code:", localStorage.getItem("token_expiry"));
-
-      // Ensure that the token is automatically cleared from memory and localStorage when it expires, using setTimeout().
-      setTimeout(() => {
-        localStorage.removeItem("access_token");
-        localStorage.removeItem("token_expiry");
-        accessToken = "";
-        console.log("Access token expired and removed.");
-      }, expiresIn * 1000);
-
-      window.history.pushState({}, null, "/Jammming/");
-      return accessToken;
-    }
-
-    // If no token or code is present, begin the PKCE login process.
-    // First, generate a secure codeVerifier and a hashed codeChallenge.
-    const codeVerifier = generateRandomString(128);
-    const codeChallenge = await sha256(codeVerifier);
-    localStorage.setItem("code_verifier", codeVerifier);
-
-    // Construct the Spotify authorization URL using the code_challenge_method=S256 and the generated codeChallenge.
-    const redirect =
-      `https://accounts.spotify.com/authorize?` +
-      `client_id=${clientID}` +
-      `&response_type=code` +
-      `&redirect_uri=${encodeURIComponent(redirectUrl)}` +
-      `&scope=playlist-modify-public` +
-      `&code_challenge_method=S256` +
-      `&code_challenge=${codeChallenge}`;
-
-    // Redirect the user to Spotify’s authorization page.
-    window.location = redirect;
-  },
-
-
-  async search(term) {
-    accessToken = await Spotify.getAccessToken();
-    return fetch(`https://api.spotify.com/v1/search?type=track&q=${term}`, {
-      method: "GET",
-      headers: { Authorization: `Bearer ${accessToken}` },
-    })
-      .then((response) => response.json())
-      .then((jsonResponse) => {
-        if (!jsonResponse) {
-          console.error("Response error");
-        }
-        return jsonResponse.tracks.items.map((t) => ({
-          id: t.id,
-          name: t.name,
-          artist: t.artists[0].name,
-          album: t.album.name,
-          uri: t.uri,
-        }));
-      });
-  },
-
-  async savePlaylist(name, trackUris) {
-    if (!name || !trackUris) return;
-    const aToken = await Spotify.getAccessToken();
-    const header = { Authorization: `Bearer ${aToken}` };
-    let userId;
-    return fetch(`https://api.spotify.com/v1/me`, { headers: header })
-      .then((response) => response.json())
-      .then((jsonResponse) => {
-        userId = jsonResponse.id;
-        let playlistId;
-        return fetch(`https://api.spotify.com/v1/users/${userId}/playlists`, {
-          headers: header,
-          method: "POST",
-          body: JSON.stringify({ name: name }),
-        })
-          .then((response) => response.json())
-          .then((jsonResponse) => {
-            playlistId = jsonResponse.id;
-            return fetch(
-              `https://api.spotify.com/v1/playlists/${playlistId}/tracks`,
-              {
-                headers: header,
-                method: "POST",
-                body: JSON.stringify({ uris: trackUris }),
-              }
-            );
-          });
-      });
-  },
-=======
     async savePlaylist(name, trackUris) {
         if (!name || !trackUris) return;
         const aToken = await Spotify.getAccessToken();
@@ -184,7 +87,6 @@ const Spotify = {
                     });
             });
     },
->>>>>>> parent of 50e78d3 (log token to console)
 };
 
 export { Spotify };
