@@ -123,7 +123,6 @@ const Spotify = {
     async savePlaylist(name, trackUris) {
         if (!name || !trackUris) return;
         const aToken = await Spotify.getAccessToken();
-        console.log(aToken)
         const header = { Authorization: `Bearer ${aToken}` };
         let userId;
         return fetch(`https://api.spotify.com/v1/me`, { headers: header })
