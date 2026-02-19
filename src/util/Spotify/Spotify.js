@@ -54,6 +54,7 @@ const Spotify = {
         })
       });
 
+<<<<<<< HEAD
       const jsonResponse = await response.json();
       accessToken = jsonResponse.access_token;
       console.log("Access token in code:", accessToken);
@@ -149,6 +150,41 @@ const Spotify = {
           });
       });
   },
+=======
+    async savePlaylist(name, trackUris) {
+        if (!name || !trackUris) return;
+        const aToken = await Spotify.getAccessToken();
+        console.log(aToken)
+        const header = {
+            Authorization: `Bearer ${aToken}`,
+            "Content-Type": "application/json"
+        };
+        let userId;
+        return fetch(`https://api.spotify.com/v1/me`, { headers: header })
+            .then((response) => response.json())
+            .then((jsonResponse) => {
+                userId = jsonResponse.id;
+                let playlistId;
+                return fetch(`https://api.spotify.com/v1/users/${userId}/playlists`, {
+                    headers: header,
+                    method: "POST",
+                    body: JSON.stringify({ name: name }),
+                })
+                    .then((response) => response.json())
+                    .then((jsonResponse) => {
+                        playlistId = jsonResponse.id;
+                        return fetch(
+                            `https://api.spotify.com/v1/playlists/${playlistId}/tracks`,
+                            {
+                                headers: header,
+                                method: "POST",
+                                body: JSON.stringify({ uris: trackUris }),
+                            }
+                        );
+                    });
+            });
+    },
+>>>>>>> parent of 50e78d3 (log token to console)
 };
 
 export { Spotify };
